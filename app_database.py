@@ -49,25 +49,6 @@ class Database:
         except Error as e:
             print(e)
 
-    # def create_item(self,item):
-    #     """
-    #     Create a new project into the projects table
-    #     :param item:
-    #     :return: item id
-    #     """
-    #     sql = f''' UPDATE item SET 
-    #                 name = '{item['name']}',
-    #                 price = {item['price']},
-    #                 is_offer = '{item['is_offer']}'
-    #             WHERE id = {item['id']} '''
-
-    #     print('SQL IS', sql)
-    #     cur = self.conn.cursor()
-    #     cur.execute(sql)
-    #     self.conn.commit()
-    #     return cur.lastrowid
-
-
     def add_word(self,word):
         """
         Create a new project into the projects table
@@ -76,24 +57,10 @@ class Database:
         """
         sql = f''' INSERT INTO chosenword(word)
                 VALUES("{word}") '''
-        print('SQL IS', sql)
         cur = self.conn.cursor()
         cur.execute(sql)
         self.conn.commit()
         return cur.lastrowid
-
-    # def all_items(self):
-    #     sql = ''' SELECT * FROM item '''
-    #     cur = self.conn.cursor()
-    #     cur.execute(sql)
-    #     rows = cur.fetchall()
-    #     items = [{
-    #         'id' : r[0],
-    #         'price' : r[1],
-    #         'is_offer' : True if r[2] == 'TRUE' else False,
-    #         'name' : r[3]
-    #     } for r in rows]
-    #     return items
 
     def get_word(self,word_id):
       sql = f''' SELECT * FROM chosenword WHERE id={word_id} LIMIT 1'''

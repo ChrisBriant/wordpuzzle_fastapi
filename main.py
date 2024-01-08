@@ -22,19 +22,6 @@ class WordSolutionResponse(BaseModel):
     score: int
     correct: bool
 
-# class Items(BaseModel):
-#     list()
-
-# @app.get("/")
-# def read_root():
-#     return {"Hello": "World"}
-
-
-# @app.get("/items/{item_id}",response_model=Item)
-# def read_item(item_id: int, q: Union[str, None] = None):
-#     return {"item_id": item_id, "q": q}
-
-
 
 @app.get("/selectword", response_model=WordListResponse)
 async def select_word(
@@ -43,15 +30,12 @@ async def select_word(
 ):
   with open('words.json', 'r') as json_file:
     words_dict = json.load(json_file)
-  #words_dict = json.loads('.\words.json')
-  print(words_dict[str(wordlength)])
   word_list = []
   #Select three word lists
   for i in range(0,3):
     random_words = random.choice(words_dict[str(wordlength)])
     word_list = [*word_list, *random_words ]
   word_list_set = set(word_list)
-  print(word_list_set)
   #Get random words from the set
   final_word_list = []
   #Check there are enough words
@@ -68,7 +52,6 @@ async def select_word(
   #Store it in the database
   db_conn = Database(DATABASE_PATH)
   id = db_conn.add_word(solution_word)
-  print(id)
   response = WordListResponse(id=id, words=final_word_list)
   return response
 
@@ -90,43 +73,12 @@ async def check_word(
   #Scoring is based on the same character in the same position
   score = 0
   for i in range(0,len(word)):
-    if word[i] == check_word[i]:
+    if word[i].lower() == check_word[i].lower():
       score += 1
   #Check if it is the correct word
   correct =  False
   if score == len(word):
     correct = True
   response = WordSolutionResponse(word=word, score=score, correct=correct)
-  #return {'word': word, 'score': score, 'correct': correct}
   return response
   
-# @app.get("/allitems/",response_model=List[ItemResponse])
-# def get_all_items():
-#     db_conn = Database(DATABASE_PATH)
-#     items = db_conn.all_items()
-#     return items
-
-# @app.put("/items/{item_id}", response_model=ItemResponse)
-# def update_item(item_id: int, item: Item):
-#     db_conn = Database(DATABASE_PATH)
-#     success = db_conn.create_item({
-#         'id': item_id,
-#         'name':item.name,
-#         'price': item.price,
-#         'is_offer' : 'TRUE' if item.is_offer else 'FALSE'
-#     })
-#     print(success)
-#     return {"name": item.name, "id": item_id, 'price' : item.price,'is_offer': item.is_offer}
-
-# @app.post("/items/additem", response_model=ItemResponse)
-# def add_item(item: Item):
-#     db_conn = Database(DATABASE_PATH)
-#     print('ITEM',item.price,item.is_offer)
-#     #success= 1
-#     success = db_conn.add_item({
-#         'name':item.name,
-#         'price': item.price,
-#         'is_offer' : 'TRUE' if item.is_offer else 'FALSE'
-#     })
-#     print(success)
-#     return {"id": success, "name": item.name,'price' : item.price,'is_offer': item.is_offer}
